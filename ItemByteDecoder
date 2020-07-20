@@ -1,0 +1,8 @@
+import nbt
+import io
+import base64
+
+
+def decode_inventory_data(raw_data):
+   data = nbt.nbt.NBTFile(fileobj = io.BytesIO(base64.b64decode(raw_data)))
+   print(data.pretty_tree())
