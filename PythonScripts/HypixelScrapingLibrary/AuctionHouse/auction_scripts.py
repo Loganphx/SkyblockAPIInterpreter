@@ -96,6 +96,7 @@ for item in x[0:5]:
     print(item.item_name)
     print(item.count)
 
+gi
 
 # How to serialize a query_set that is returned by Django ORM
 serializer_data = AuctionListingSerializer(x, many=True)
