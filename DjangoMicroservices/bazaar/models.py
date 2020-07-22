@@ -1,16 +1,39 @@
 from django.db import models
 
+
 # Create your models here.
-class AuctionListing(models.Model):
-    id = models.CharField(max_length=1000, null=True)
-    tier = models.CharField(max_length=255, null=True)
-    category = models.CharField(max_length=50, null=True)
-    auctioneer = models.CharField(max_length=128, null=True)
-    starting_bid = models.FloatField()
-    item_bytes = models.CharField(max_length=5000, null=True)
-    count = models.IntegerField()
-    username = models.CharField(max_length=32, null=True)
-    start = models.CharField(max_length=50, null=True)
-    end = models.CharField(max_length=50, null=True)
-    bin = models.BooleanField(default=False, null=True)
-    uuid = models.CharField(max_length=128, null=True)
+
+class BazaarBuySummary(models.Model):
+    product_id = models.CharField(max_length=1000, null=True)
+    amount = models.IntegerField()
+    pricePerUnit = models.FloatField()
+    orders = models.IntegerField()
+
+
+class BazaarSellSummary(models.Model):
+    product_id = models.CharField(max_length=1000, null=True)
+    amount = models.IntegerField()
+    pricePerUnit = models.FloatField()
+    orders = models.IntegerField()
+
+
+class BazaarQuickStatus(models.Model):
+    product_id = models.CharField(max_length=1000, null=True)
+    sellPrice = models.FloatField()
+    sellVolume = models.IntegerField()
+    sellMovingWeek = models.IntegerField()
+    sellOrders = models.IntegerField()
+    buyPrice = models.FloatField()
+    buyVolume = models.IntegerField()
+    buyMovingWeek = models.IntegerField()
+    buyOrders = models.IntegerField()
+
+
+class BazaarListing(models.Model):
+    id = models.CharField(max_length=1000, primary_key=True)
+    buy_summary = models.OneToOneField(BazaarBuySummary, on_delete=models.CASCADE)
+    sell_summary = models.OneToOneField(BazaarSellSummary, on_delete=models.CASCADE)
+    quick_status = models.OneToOneField(BazaarQuickStatus, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['id', 'buy_summary', 'sell_summary', 'quick_status']

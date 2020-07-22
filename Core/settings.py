@@ -28,8 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # File Path Constants
-SQLitePath = '/home/doom/PycharmProjects/SkyblockAPIInterpreter/db.sqlite3'
-CSVDownloadsPath = 'Downloads/csv/'
+SQLitePath = 'C:/Users/Tristan/PycharmProjects/SkyblockAPIInterpreter/db.sqlite3'
+CSVDownloadsPath = 'C:/Users/Tristan/PycharmProjects/SkyblockAPIInterpreter/Downloads/csv/'
 
 # Application definition
 
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'DjangoMicroservices.auctionhouse',
+    'DjangoMicroservices.bazaar',
+
 ]
 
 MIDDLEWARE = [

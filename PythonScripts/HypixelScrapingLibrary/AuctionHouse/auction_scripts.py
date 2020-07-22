@@ -7,8 +7,7 @@ import csv
 import nbt
 
 from Core.settings import CSVDownloadsPath
-from DjangoMicroservices.auctionhouse.models import AuctionListing
-from DjangoMicroservices.auctionhouse.serializer import AuctionListingSerializer
+from PythonScripts.SQLiteLibrary.SQLiteConnection import update_auction_listings_table, connect_to_SQLite
 
 
 def get_auction_bins() -> json:
@@ -42,7 +41,7 @@ def get_username(uuid):
 
 
 def parse_auction_listings(auction_data):
-    final_array = [['item_name', 'tier', 'category', 'starting_bid', 'count', 'auctioneer', 'start', 'end', 'bin', 'uuid']]
+    final_array = [['item_name', 'tier', 'category', 'starting_bid', 'count', 'auctioneer', 'start', 'end', 'bin', 'uuid','item_bytes']]
     for item in auction_data:
         passing_array = []
         passing_array.append(item['item_name'])
@@ -74,7 +73,13 @@ def write_auctions_file(auctions_array):
         writer.writerows(auctions_array)
 
 
-'''start_time = time.time()
+
+
+
+
+
+
+# start_time = time.time()
 
 auction_data = get_auction_bins()
 
@@ -82,13 +87,14 @@ auctions_array = parse_auction_listings(auction_data)
 
 write_auctions_file(auctions_array)
 
-cursor = connect_to_SQLite()
+conn = connect_to_SQLite()
 
-update_auction_listings_table(cursor=cursor)
+update_auction_listings_table(cursor=conn.cursor(), conn=conn)
 
 end_time = time.time()
-print(end_time - start_time)
+# print(end_time - start_time)
 
+'''
 # How to query using the ORM. Call model classes like AuctionListing
 x = AuctionListing.objects.filter(item_name='Crystal Fragment')
 for item in x[0:5]:
