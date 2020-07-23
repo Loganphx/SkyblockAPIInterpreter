@@ -36,3 +36,9 @@ def update_bazaar_bazaarsellsummary_table(cursor, conn):
     cursor.close()
     df = pandas.read_csv(CSVDownloadsPath + 'sell_summary.csv', index_col=False)
     df.to_sql('bazaar_bazaarsellsummary', conn, if_exists='append', index=False)
+
+def update_bazaar_bazaarlisting_table(cursor, conn):
+    cursor.execute('delete from bazaar_bazaarlisting;')
+    cursor.close()
+    df = pandas.read_csv(CSVDownloadsPath + 'bazaar_listing.csv', index_col=False)
+    df.to_sql('bazaar_bazaarlisting', conn, if_exists='append', index=False)

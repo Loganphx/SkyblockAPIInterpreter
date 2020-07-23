@@ -18,19 +18,20 @@ def get_auction_bins() -> json:
     total_Pages = json_loaded['totalPages']
     page = 0
     auction_items = []
-    while(page < total_Pages):
-        x = requests.get('https://api.hypixel.net/skyblock/auctions?key=41b2a888-f84c-4287-bf56-2012895c8e4d&page=' + str(page))
+    while (page < total_Pages):
+        x = requests.get(
+            'https://api.hypixel.net/skyblock/auctions?key=41b2a888-f84c-4287-bf56-2012895c8e4d&page=' + str(page))
         parsed = json.dumps(x.json())
         json_loaded = json.loads(parsed)
         for listing in json_loaded['auctions']:
-            if('bin' in listing.keys()):
-                if(listing['bin'] == True):
+            if ('bin' in listing.keys()):
+                if (listing['bin'] == True):
                     auction_items.append(listing)
-        page=page+1
+        page = page + 1
 
     end_time = time.time()
     print(end_time - start_time)
-    return(auction_items)
+    return (auction_items)
 
 
 def get_username(uuid):
@@ -41,19 +42,18 @@ def get_username(uuid):
 
 
 def parse_auction_listings(auction_data):
-    final_array = [['item_name', 'tier', 'category', 'starting_bid', 'count', 'auctioneer', 'start', 'end', 'bin', 'uuid','item_bytes']]
+    final_array = [
+        ['item_name', 'tier', 'category', 'starting_bid', 'count', 'auctioneer', 'start', 'end', 'bin', 'uuid',
+         'item_bytes']]
+    usernameDict = read_username_dict()
     for item in auction_data:
         passing_array = []
         passing_array.append(item['item_name'])
         passing_array.append(item['tier'])
         passing_array.append(item['category'])
-        #userid = item['auctioneer']
-        #x = requests.get('https://playerdb.co/api/player/minecraft/' + userid)
-        #parsed = json.dumps(x.json())
-        #json_loaded = json.loads(parsed)
-        #passing_array.append(json_loaded['data']['player']['username'])
+       # passing_array.append(usernameDict[item['username']])
         passing_array.append(item['starting_bid'])
-        data = nbt.nbt.NBTFile(fileobj = io.BytesIO(base64.b64decode(item['item_bytes'])))
+        data = nbt.nbt.NBTFile(fileobj=io.BytesIO(base64.b64decode(item['item_bytes'])))
         count = data['i'][0]['Count']
         passing_array.append(count)
         passing_array.append(item['auctioneer'])
@@ -73,26 +73,47 @@ def write_auctions_file(auctions_array):
         writer.writerows(auctions_array)
 
 
+def read_username_dict():
+    with open(CSVDownloadsPath + 'username_dict.csv') as csvDataFile:
+        username_dict = dict()
+        csvReader = csv.reader(csvDataFile)
+        print('file opened')
+        for row in csvReader:
+            userid = row[0]
+            if ((userid in username_dict.keys()) != True):
+                username_dict[userid] = row[1]
+    return username_dict
 
 
+def write_usernames_file(userid, username):
+    with open(CSVDownloadsPath + 'username_dict.csv', 'a', newline='\n', encoding='utf-8') as foo:
+        writer = csv.writer(foo)
+        myarray = [userid, username]
+        writer.writerow(myarray)
 
 
+def isUsernameInDict(auctions_data):
+    usernameDatabase = read_username_dict()
+    for item in auctions_data:
+        userid = item['auctioneer']
+        if not (userid in usernameDatabase.keys()):
+            x = requests.get('https://playerdb.co/api/player/minecraft/' + userid)
+            parsed = json.dumps(x.json())
+            json_loaded = json.loads(parsed)
+            username = json_loaded['data']['player']['username']
+            usernameDatabase[userid] = username
+
+            write_usernames_file(userid, username)
 
 
-# start_time = time.time()
 
 auction_data = get_auction_bins()
-
+isUsernameInDict(auction_data)
 auctions_array = parse_auction_listings(auction_data)
-
 write_auctions_file(auctions_array)
-
 conn = connect_to_SQLite()
-
 update_auction_listings_table(cursor=conn.cursor(), conn=conn)
-
-end_time = time.time()
-# print(end_time - start_time)
+print('Auction Scripts Ran.')
 
 '''
 # How to query using the ORM. Call model classes like AuctionListing

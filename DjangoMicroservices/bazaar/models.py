@@ -30,10 +30,11 @@ class BazaarQuickStatus(models.Model):
 
 
 class BazaarListing(models.Model):
-    id = models.CharField(max_length=1000, primary_key=True)
-    buy_summary = models.OneToOneField(BazaarBuySummary, on_delete=models.CASCADE)
-    sell_summary = models.OneToOneField(BazaarSellSummary, on_delete=models.CASCADE)
-    quick_status = models.OneToOneField(BazaarQuickStatus, on_delete=models.CASCADE)
+    product_id = models.CharField(max_length=1000, primary_key=True)
+    buy_summary = models.ForeignKey(BazaarBuySummary, on_delete=models.CASCADE)
+    sell_summary = models.ForeignKey(BazaarSellSummary, on_delete=models.CASCADE)
+    quick_status = models.ForeignKey(BazaarQuickStatus, on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ['id', 'buy_summary', 'sell_summary', 'quick_status']
+    '''class Meta:
+        ordering = ['product_id', 'buy_summary', 'sell_summary', 'quick_status']
+    '''
