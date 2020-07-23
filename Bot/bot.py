@@ -45,7 +45,8 @@ async def on_message(message):
         response = eventTimer.timeUntilSpecificEvent('Season of Jerry')
         await message.channel.send(response)
 
-    if message.content.lower() == '!newyear' or message.content.lower() == '!nyc' or message.content.lower() == 'new year':
+    if message.content.lower() == '!newyear' or message.content.lower() == '!nyc' or message.content.lower() == 'new year' \
+            or message.content.lower() == '!cake':
         response = eventTimer.timeUntilSpecificEvent('New Year Celebration')
         await message.channel.send(response)
     if message.content.lower() == 'is logan cool?':
@@ -70,5 +71,4 @@ async def dm():
     print(user)
     #await client.send_message(user, "Your message goes here")
 
-dm()
 client.run(TOKEN)
