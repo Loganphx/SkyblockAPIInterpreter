@@ -34,12 +34,12 @@ for item in x[0:5]:
     print(item.count)
     """
 # bazaar_data = get_bazaar_data()
-print('Scripts started')
-bazaar_scripts
-auction_scripts
-i = 0
-while i != 1000:
-    isUsernameInDict(get_auction_bins())
-    i = i + 1
-    print('Program has ran ' + str(i) + ' times')
-    time.sleep(60)
+# print('Scripts started')
+# bazaar_scripts
+# auction_scripts
+# i = 0
+# while i != 1000:
+#     isUsernameInDict(get_auction_bins())
+#     i = i + 1
+#     print('Program has ran ' + str(i) + ' times')
+#     time.sleep(60)

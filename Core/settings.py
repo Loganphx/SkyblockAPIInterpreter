@@ -25,6 +25,7 @@ SECRET_KEY = '4qc#t7bm2#l0q7v0wdolry3s^t#_@38edz-ma0az=(y$gz_)4c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DOMAIN_NAME = 'localhost:4200'
 ALLOWED_HOSTS = []
 
 # File Path Constants
@@ -33,6 +34,7 @@ CSVDownloadsPath = 'C:/Users/Tristan/PycharmProjects/SkyblockAPIInterpreter/Down
 
 # Application definition
 
+AUTH_USER_MODEL = 'Users.User'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,8 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_rest_passwordreset',
     'DjangoMicroservices.auctionhouse',
     'DjangoMicroservices.bazaar',
+    'Users',
 
 ]
 
@@ -124,3 +129,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+### EMAIL CONSTANTS ###
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_SSL = True
+EMAIL_USE_TSL = False
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'HlhAvailSPA@gmail.com'
+EMAIL_HOST_PASSWORD = 'Aliens21902635!'
