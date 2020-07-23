@@ -4,21 +4,21 @@ from django.db import models
 # Create your models here.
 
 class BazaarBuySummary(models.Model):
-    product_id = models.CharField(max_length=1000, null=True)
+    product_id = models.CharField(max_length=1000)
     amount = models.IntegerField()
     pricePerUnit = models.FloatField()
     orders = models.IntegerField()
 
 
 class BazaarSellSummary(models.Model):
-    product_id = models.CharField(max_length=1000, null=True)
+    product_id = models.CharField(max_length=1000)
     amount = models.IntegerField()
     pricePerUnit = models.FloatField()
     orders = models.IntegerField()
 
 
 class BazaarQuickStatus(models.Model):
-    product_id = models.CharField(max_length=1000, null=True)
+    product_id = models.CharField(max_length=1000, primary_key=True)
     sellPrice = models.FloatField()
     sellVolume = models.IntegerField()
     sellMovingWeek = models.IntegerField()

@@ -3,8 +3,9 @@ import json
 import requests
 
 from Core.settings import CSVDownloadsPath
+from DjangoMicroservices.bazaar.models import BazaarBuySummary
 from PythonScripts.SQLiteLibrary.SQLiteConnection import update_bazaar_bazaarquickstatus_table, connect_to_SQLite, \
-    update_bazaar_bazaarsellsummary_table, update_bazaar_bazaarbuysummary_table, update_bazaar_bazaarlisting_table
+    update_bazaar_bazaarsellsummary_table, update_bazaar_bazaarbuysummary_table
 
 
 def get_bazaar_data() -> json:
@@ -92,6 +93,31 @@ def write_buy_summary_file(bazaar_data):
         for item in buySummaryArray:
             writer.writerow(item)
 
+def write_bazaar_listing(bazaar_data):
+    with open(CSVDownloadsPath + 'buy_summary.csv', 'w', newline='\n', encoding='utf-8') as foo:
+        writer = csv.writer(foo)
+        buySummaryArray = getBuySummaries(bazaar_data)
+        for item in buySummaryArray:
+            writer.writerow(item)
+
+
+def read_buy_summary(bazaar_data):
+    with open(CSVDownloadsPath + 'buy_summary.csv') as csvDataFile:
+        buy_summaries = dict()
+        csvReader = csv.reader(csvDataFile)
+        print('file opened')
+        next(csvReader)
+        for row in csvReader:
+            product_id = row[0]
+            buyOrder = BazaarBuySummary(product_id=row[0], amount=row[1], pricePerUnit=row[2], orders=row[3])
+            if(product_id in buy_summaries.keys()):
+                buy_summaries.get(product_id).append(buyOrder)
+            else:
+                newArray = list()
+                buy_summaries[product_id] = newArray
+                print(product_id + ' was not in dict so it was added')
+        for item in buy_summaries:
+            print(buy_summaries[item])
 
 bazaarData = get_bazaar_data()
 write_buy_summary_file(bazaar_data=bazaarData)
@@ -102,5 +128,4 @@ conn = connect_to_SQLite()
 update_bazaar_bazaarquickstatus_table(cursor=conn.cursor(), conn=conn)
 update_bazaar_bazaarbuysummary_table(cursor=conn.cursor(), conn=conn)
 update_bazaar_bazaarsellsummary_table(cursor=conn.cursor(), conn=conn)
-update_bazaar_bazaarlisting_table(cursor=conn.cursor(), conn=conn)
 

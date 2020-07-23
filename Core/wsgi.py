@@ -11,15 +11,14 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-from DjangoMicroservices.auctionhouse.models import AuctionListing
-from DjangoMicroservices.auctionhouse.serializer import AuctionListingSerializer
+from PythonScripts.HypixelScrapingLibrary.Bazaar.bazaar_scripts import read_buy_summary, get_bazaar_data
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Core.settings')
 
 application = get_wsgi_application()
 
 
-x = AuctionListing.objects.filter(item_name='Crystal Fragment')
+"""x = AuctionListing.objects.filter(item_name='Crystal Fragment')
 serializer_data = AuctionListingSerializer(x, many=True)
 for item in serializer_data.data[0:5]:
     print(item)
@@ -27,3 +26,6 @@ for item in serializer_data.data[0:5]:
 for item in x[0:5]:
     print(item.item_name)
     print(item.count)
+    """
+bazaar_data = get_bazaar_data()
+read_buy_summary(bazaar_data)
