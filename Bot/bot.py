@@ -33,6 +33,7 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == client.user:
         return
+
     if message.content.lower() == '!se':
         response = eventTimer.timeUntilSpecificEvent()
         await message.channel.send(response)
@@ -49,13 +50,16 @@ async def on_message(message):
             or message.content.lower() == '!cake':
         response = eventTimer.timeUntilSpecificEvent('New Year Celebration')
         await message.channel.send(response)
+
     if message.content.lower() == 'is logan cool?':
         response = 'Yeah, that dude is awesome!'
         await message.channel.send(response)
+
     if message.content.lower() == 'are you gay':
         response = "Nah, I ain't gay homie."
         print(message.author)
         await message.channel.send(response)
+
 
 async def eventStart():
     if True == True:
@@ -66,7 +70,6 @@ async def eventStart():
 
 
 async def dm():
-
     user=client.get_user_info("Loganphx#1991")
     print(user)
     #await client.send_message(user, "Your message goes here")
