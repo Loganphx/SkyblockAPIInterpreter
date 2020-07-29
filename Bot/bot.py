@@ -6,7 +6,7 @@ import discord
 from discord.ext import tasks
 from dotenv import load_dotenv
 
-from Bot import eventTimer
+from Bot import eventTimer, minionSheetMaker
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -31,9 +31,10 @@ async def on_member_join(member):
 
 @client.event
 async def on_message(message):
+    direct_message = message.content
+    direct_message_split = direct_message.split(', ')
     if message.author == client.user:
         return
-
     if message.content.lower() == '!se':
         response = eventTimer.timeUntilSpecificEvent()
         await message.channel.send(response)
@@ -60,6 +61,19 @@ async def on_message(message):
         print(message.author)
         await message.channel.send(response)
 
+    if (direct_message_split[0].lower()) == '!minions':
+        if(len(direct_message_split) >= 3):
+            username = direct_message_split[1]
+            profile = direct_message_split[2]
+            await message.channel.send('Your spreadsheet is being created.')
+            response = 'You will find a minion sheet made specifically for you here! \n ' + \
+                       minionSheetMaker.createMinionSheetFileAndReturnURL(username, profile)
+
+
+        else:
+            response = 'Formatting is incorrect \nEx. !minions, Loganphx, Orange '
+
+        await message.channel.send(response)
 
 async def eventStart():
     if True == True:
@@ -70,6 +84,7 @@ async def eventStart():
 
 
 async def dm():
+
     user=client.get_user_info("Loganphx#1991")
     print(user)
     #await client.send_message(user, "Your message goes here")

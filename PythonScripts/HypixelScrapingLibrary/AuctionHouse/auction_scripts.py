@@ -106,7 +106,7 @@ def isUsernameInDict(auctions_data):
             write_usernames_file(userid, username)
 
 
-'''
+
 auction_data = get_auction_bins()
 isUsernameInDict(auction_data)
 auctions_array = parse_auction_listings(auction_data)
@@ -114,7 +114,7 @@ write_auctions_file(auctions_array)
 conn = connect_to_SQLite()
 update_auction_listings_table(cursor=conn.cursor(), conn=conn)
 print('Auction Scripts Ran.')
-'''
+
 '''
 # How to query using the ORM. Call model classes like AuctionListing
 x = AuctionListing.objects.filter(item_name='Crystal Fragment')

@@ -167,7 +167,7 @@ def write_bazaar_listing_file():
         writer = csv.writer(foo)
         writer.writerows(finalArray)
 
-'''
+
 bazaarData = get_bazaar_data()
 write_buy_summary_file(bazaar_data=bazaarData)
 write_sell_summary_file(bazaar_data=bazaarData)
@@ -180,5 +180,5 @@ update_bazaar_bazaarbuysummary_table(cursor=conn.cursor(), conn=conn)
 update_bazaar_bazaarsellsummary_table(cursor=conn.cursor(), conn=conn)
 update_bazaar_bazaarlisting_table(cursor=conn.cursor(), conn=conn)
 print('Bazaar Scripts Ran.')
-'''
+
 
