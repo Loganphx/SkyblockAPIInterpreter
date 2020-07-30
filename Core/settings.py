@@ -29,8 +29,9 @@ DOMAIN_NAME = 'localhost:4200'
 ALLOWED_HOSTS = []
 
 # File Path Constants
-SQLitePath = 'C:/Users/Tristan/PycharmProjects/SkyblockAPIInterpreter/db.sqlite3'
-CSVDownloadsPath = 'C:/Users/Tristan/PycharmProjects/SkyblockAPIInterpreter/Downloads/csv/'
+SQLitePath = 'db.sqlite3'
+CSVDownloadsPath = 'Downloads/csv/'
+APIKEY = '050b4a40-97a0-4056-8a7a-bf93eede865f'
 
 # Application definition
 

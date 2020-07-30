@@ -35,7 +35,7 @@ for item in x[0:5]:
     """
 # bazaar_data = get_bazaar_data()
 # print('Scripts started')
-# bazaar_scripts
+bazaar_scripts
 # auction_scripts
 # i = 0
 # while i != 1000:

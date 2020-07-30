@@ -6,28 +6,28 @@ import time
 import csv
 import nbt
 
-from Core.settings import CSVDownloadsPath
+from Core.settings import CSVDownloadsPath, APIKEY
 from PythonScripts.SQLiteLibrary.SQLiteConnection import update_auction_listings_table, connect_to_SQLite
 
 
 def get_auction_bins() -> json:
     start_time = time.time()
-    x = requests.get('https://api.hypixel.net/skyblock/auctions?key=41b2a888-f84c-4287-bf56-2012895c8e4d')
+    URL = 'https://api.hypixel.net/skyblock/auctions?key=' + APIKEY
+    x = requests.get(URL)
     parsed = json.dumps(x.json())
     json_loaded = json.loads(parsed)
     total_Pages = json_loaded['totalPages']
     page = 0
     auction_items = []
-    while (page < total_Pages):
-        x = requests.get(
-            'https://api.hypixel.net/skyblock/auctions?key=41b2a888-f84c-4287-bf56-2012895c8e4d&page=' + str(page))
+    for page in range(total_Pages):
+        x = requests.get(URL + '&page=' + str(page))
+        print(x)
         parsed = json.dumps(x.json())
         json_loaded = json.loads(parsed)
         for listing in json_loaded['auctions']:
             if ('bin' in listing.keys()):
                 if (listing['bin'] == True):
                     auction_items.append(listing)
-        page = page + 1
 
     end_time = time.time()
     print(end_time - start_time)
@@ -106,7 +106,7 @@ def isUsernameInDict(auctions_data):
             write_usernames_file(userid, username)
 
 
-
+'''
 auction_data = get_auction_bins()
 isUsernameInDict(auction_data)
 auctions_array = parse_auction_listings(auction_data)
@@ -114,7 +114,7 @@ write_auctions_file(auctions_array)
 conn = connect_to_SQLite()
 update_auction_listings_table(cursor=conn.cursor(), conn=conn)
 print('Auction Scripts Ran.')
-
+'''
 '''
 # How to query using the ORM. Call model classes like AuctionListing
 x = AuctionListing.objects.filter(item_name='Crystal Fragment')

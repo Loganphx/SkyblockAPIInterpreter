@@ -2,14 +2,14 @@ import csv
 import json
 import requests
 
-from Core.settings import CSVDownloadsPath
+from Core.settings import CSVDownloadsPath, APIKEY
 from DjangoMicroservices.bazaar.models import BazaarBuySummary, BazaarSellSummary, BazaarQuickStatus
 from PythonScripts.SQLiteLibrary.SQLiteConnection import update_bazaar_bazaarquickstatus_table, connect_to_SQLite, \
     update_bazaar_bazaarsellsummary_table, update_bazaar_bazaarbuysummary_table, update_bazaar_bazaarlisting_table
 
 
 def get_bazaar_data() -> json:
-    x = requests.get('https://api.hypixel.net/skyblock/bazaar?key=41b2a888-f84c-4287-bf56-2012895c8e4d')
+    x = requests.get('https://api.hypixel.net/skyblock/bazaar?key=' + APIKEY)
     parsed = json.dumps(x.json())
     json_loaded = json.loads(parsed)
     return json_loaded
@@ -51,7 +51,7 @@ def getBuySummaries(bazaar_data):
 
 def get_quick_status(itemQuickStatus, product_id):
     quickStatusArray = []
-    quickStatusArray.append(product_id)
+    quickStatusArray.append(product_id + '_Q')
     quickStatusArray.append(itemQuickStatus['sellPrice'])
     quickStatusArray.append(itemQuickStatus['sellVolume'])
     quickStatusArray.append(itemQuickStatus['sellMovingWeek'])
@@ -83,14 +83,18 @@ def write_sell_summary_file(bazaar_data):
     with open(CSVDownloadsPath + 'sell_summary.csv', 'w', newline='\n', encoding='utf-8') as foo:
         writer = csv.writer(foo)
         sellSummaryArray = getSellSummaries(bazaar_data)
-        writer.writerows(sellSummaryArray)
-
+        for count, item in enumerate(sellSummaryArray):
+            if count > 0:
+                item[0] = item[0] + '_S'
+            writer.writerow(item)
 
 def write_buy_summary_file(bazaar_data):
     with open(CSVDownloadsPath + 'buy_summary.csv', 'w', newline='\n', encoding='utf-8') as foo:
         writer = csv.writer(foo)
         buySummaryArray = getBuySummaries(bazaar_data)
-        for item in buySummaryArray:
+        for count, item in enumerate(buySummaryArray):
+            if count > 0:
+                item[0] = item[0] + '_B'
             writer.writerow(item)
 
 
@@ -104,19 +108,18 @@ def write_bazaar_listing(bazaar_data):
 
 def read_buy_summary():
     with open(CSVDownloadsPath + 'buy_summary.csv') as csvDataFile:
-        buy_summaries = dict()
+        buy_summaries = {}
         csvReader = csv.reader(csvDataFile)
         print('file opened')
         next(csvReader)
         for row in csvReader:
-            product_id = row[0]
-            buyOrder = BazaarBuySummary(id=enumerate(row),product_id=row[0], amount=row[1], pricePerUnit=row[2], orders=row[3])
+            product_id = str(row[0])[0:-2]
+            buyOrder = BazaarBuySummary(product_id=row[0], amount=row[1], pricePerUnit=row[2], orders=row[3])
             if product_id in buy_summaries.keys():
-                buy_summaries.get(product_id).append(buyOrder)
+                buy_summaries[product_id].append(buyOrder)
             else:
                 newArray = list()
-                buy_summaries[product_id] = newArray
-                print(product_id + ' was not in dict so it was added')
+                buy_summaries[product_id] = []
     return buy_summaries
 
 
@@ -127,14 +130,15 @@ def read_sell_summary():
         print('file opened')
         next(csvReader)
         for row in csvReader:
-            product_id = row[0]
-            sellOrder = BazaarSellSummary(id=enumerate(row),product_id=row[0], amount=row[1], pricePerUnit=row[2], orders=row[3])
+            product_id = str(row[0])[0:-2]
+            sellOrder = BazaarSellSummary(product_id=row[0], amount=row[1], pricePerUnit=row[2], orders=row[3])
             if product_id in sell_summaries.keys():
-                sell_summaries.get(product_id).append(sellOrder)
+                sell_summaries[product_id].append(sellOrder)
             else:
                 newArray = list()
                 sell_summaries[product_id] = newArray
-                print(product_id + ' was not in dict so it was added')
+            print('------', product_id)
+    print(sell_summaries)
     return sell_summaries
 
 
@@ -145,12 +149,11 @@ def read_quick_status():
         print('file opened')
         next(csvReader)
         for row in csvReader:
-            product_id = row[0]
-            quickStatus = BazaarQuickStatus(id=enumerate(row), product_id=product_id,sellPrice=row[1],sellVolume=row[2],
+            product_id = row[0] + '_Q'
+            quickStatus = BazaarQuickStatus(product_id=product_id,sellPrice=row[1],sellVolume=row[2],
                                             sellMovingWeek=row[3],sellOrders=row[4],buyPrice=row[5],buyVolume=row[6],
                                             buyMovingWeek=row[7],buyOrders=row[8])
             quick_statuses[product_id] = quickStatus
-            print(product_id + ' was not in dict so it was added')
     return quick_statuses
 
 
@@ -158,10 +161,14 @@ def write_bazaar_listing_file():
     buySummary = read_buy_summary()
     sellSummary = read_sell_summary()
     quickStatus = read_quick_status()
-    finalArray = [['id', 'product_id', 'buy_summary', 'sell_summary', 'quick_status']]
+    finalArray = [['product_id', 'buy_summary_id', 'sell_summary_id', 'quick_status_id']]
     for item in buySummary:
-        product_id = (buySummary[item][0]).product_id
-        tempArray = [enumerate(buySummary[item]), product_id, buySummary[item], sellSummary[item], quickStatus[item]]
+        print(item)
+        sell_id = item + '_S'
+        buy_id = item + '_B'
+        quick_sell_id = item + '_Q'
+        product_id_temp = (buySummary[item][0]).product_id
+        tempArray = [item, buy_id, sell_id, quick_sell_id]
         finalArray.append(tempArray)
     with open(CSVDownloadsPath + 'bazaar_listing.csv', 'w', newline='\n', encoding='utf-8') as foo:
         writer = csv.writer(foo)
@@ -172,8 +179,8 @@ bazaarData = get_bazaar_data()
 write_buy_summary_file(bazaar_data=bazaarData)
 write_sell_summary_file(bazaar_data=bazaarData)
 write_quick_status_file(bazaar_data=bazaarData)
-write_bazaar_listing(bazaar_data=bazaarData)
-
+write_bazaar_listing_file()
+print('test')
 conn = connect_to_SQLite()
 update_bazaar_bazaarquickstatus_table(cursor=conn.cursor(), conn=conn)
 update_bazaar_bazaarbuysummary_table(cursor=conn.cursor(), conn=conn)
